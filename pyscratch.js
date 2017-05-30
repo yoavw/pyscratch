@@ -185,7 +185,15 @@
 					delete vars[cmd_args.forget_clone_id];
 					delete cmds[cmd_args.forget_clone_id];
 				} else if (cmd_args.cmd == 'js' && clone_id in vars && 'script' in cmd_args) {
-					vars[clone_id]['js_result'] = eval(cmd_args.script);
+					try {
+						res = eval(cmd_args.script);
+						if (res)
+							vars[clone_id]['js_result'] = res;
+						else
+							vars[clone_id]['js_result'] = '';
+					} catch(err) {
+						vars[clone_id]['js_result'] = 'error: '+err;
+					}
 				} else if (cmd_args.cmd == 'flush') {
 					for (k in cmds) {
 						//if (k.startsWith(name+'-')) {
