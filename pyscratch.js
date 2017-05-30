@@ -1,4 +1,4 @@
-// Used with py4scratch.py and sbx2py.py.
+// Used with pyscratch.py and sbx2py.py.
 // Acts as a bridge between Scratch and Python, allowing full control of Scratch from a Python program.
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
@@ -292,6 +292,6 @@
 	};
 
 	// Register the extension
-	ScratchExtensions.register('py4scratch extension', descriptor, ext);
+	ScratchExtensions.register('pyscratch extension', descriptor, ext);
 
 })({});
