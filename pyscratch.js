@@ -184,6 +184,8 @@
 					//console.log("forgetting "+cmd_args.forget_clone_id);
 					delete vars[cmd_args.forget_clone_id];
 					delete cmds[cmd_args.forget_clone_id];
+				} else if (cmd_args.cmd == 'js' && clone_id in vars && 'script' in cmd_args) {
+					vars[clone_id]['js_result'] = eval(cmd_args.script);
 				} else if (cmd_args.cmd == 'flush') {
 					for (k in cmds) {
 						//if (k.startsWith(name+'-')) {
