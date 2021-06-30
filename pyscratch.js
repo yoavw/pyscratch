@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test24");
+console.log("test25");
 
 class Pyscratch {
 
@@ -21,7 +21,7 @@ class Pyscratch {
 		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
 
-	fetchCloneID(obj_name, cur_id) {
+	fetchCloneID(obj_name, cur_id, callback) {
 
 		var data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
 		const response = fetch(this.url+'new', {
@@ -33,14 +33,15 @@ class Pyscratch {
 			},
 			body: JSON.stringify(data)
 		}).then(res => res.json()).catch(err => '');
-		return response;
+		console.log('returning ',response);
+		callback(response);
 	}
 
 	fetchCommand(name) {
 
 		var v = {'uuid':this.uuid, 'name':name};
 
-		comp = [];
+		var comp = [];
 		if (!(name in this.completed))
 			this.completed[name] = []
 		while ((w = this.completed[name].shift()))
