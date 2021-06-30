@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test16");
+console.log("test17");
 
 class Pyscratch {
 
@@ -24,7 +24,7 @@ class Pyscratch {
 	fetchCloneID(obj_name, cur_id) {
 
 		data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
-		const response = fetch(url: url+'new', {
+		const response = fetch(url+'new', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
