@@ -7,7 +7,7 @@
 
 console.log("test7");
 
-var $ = require("jquery")(window);
+var $ = window.$;
 
 class Pyscratch {
 
