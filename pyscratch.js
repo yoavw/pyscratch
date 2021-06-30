@@ -5,29 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test14");
-
-(function() {
-	console.log("func1");
-})();
-
-console.log(document);
-
-(function() {
-    // Load the script
-    var script = document.createElement("SCRIPT");
-    script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
-    script.type = 'text/javascript';
-    script.onload = function() {
-		console.log("loaded jquery");
-        //var $ = window.jQuery;
-		//console(window);
-		//console(window.jQuery);
-		//console.log($);
-        // Use $ here...
-    };
-    document.getElementsByTagName("head")[0].appendChild(script);
-})();
+console.log("test15");
 
 class Pyscratch {
 
@@ -45,19 +23,17 @@ class Pyscratch {
 
 	fetchCloneID(obj_name, cur_id) {
 
-		$.ajax({
-			url: url+'new',
-			data: { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id },
-			dataType: 'json',
+		data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
+		const response = await fetch(url: url+'new', {
 			method: 'POST',
-			cache: false,
-			success: function(data) {
-				return data;
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function (textStatus, errorThrown) {
-				return {"clone_id":"DISCONNECTED","error":textStatus};
-			}
+			body: JSON.stringify(data)
 		});
+		return response.json();
 	}
 
 	fetchCommand(name) {
