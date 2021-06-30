@@ -19,7 +19,7 @@ class Pyscratch {
 		window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
 
-	function fetchCloneID(obj_name, cur_id) {
+	fetchCloneID(obj_name, cur_id) {
 
 		$.ajax({
 			url: url+'new',
@@ -36,7 +36,7 @@ class Pyscratch {
 		});
 	}
 
-	function fetchCommand(name) {
+	fetchCommand(name) {
 
 		v = {'uuid':uuid, 'name':name};
 
@@ -70,7 +70,7 @@ class Pyscratch {
 		});
 	}
 
-	function deliverEvent(event_name, event_arg, clone_id) {
+	deliverEvent(event_name, event_arg, clone_id) {
 
 		$.ajax({
 			url: url+'event',
@@ -87,7 +87,7 @@ class Pyscratch {
 		});
 	}
 
-	function deliverVar(name, value) {
+	deliverVar(name, value) {
 
 		$.ajax({
 			url: url+'newvar',
@@ -104,7 +104,7 @@ class Pyscratch {
 		});
 	}
 
-	function deliverStart() {
+	deliverStart() {
 
 		$.ajax({
 			url: url+'start',
@@ -122,33 +122,33 @@ class Pyscratch {
 	}
 
 	// Cleanup function when the extension is unloaded
-	_shutdown = function() {loaded = false;};
+	_shutdown() {loaded = false;};
 
 	// Status reporting code
 	// Use this to report missing hardware, plugin or unsupported browser
-	_getStatus = function() {
+	_getStatus() {
 		return {status: 2, msg: 'Ready'};
 	};
 
-	setVar = function({name,value,clone_id}) {
+	setVar({name,value,clone_id}) {
 		vars[clone_id][name] = value;
 		//console.log('Set '+name+' = '+value+' for '+clone_id);
 		return;
 	};
 
-	removeVar = function({name,clone_id}) {
+	removeVar({name,clone_id}) {
 		delete vars[clone_id][name];
 		//console.log('Removed var '+name+' for '+clone_id);
 		return;
 	};
 
-	setUrl = function({u}) {
+	setUrl({u}) {
 		url = u;
 		//console.log('Set url to '+url);
 		return;
 	};
 
-	getCommandArg = function({arg_name, clone_id}) {
+	getCommandArg({arg_name, clone_id}) {
 		if (!clone_id.includes('-')) {
 			// First object (non-clone) on first run
 			return 'get_clone_id';
@@ -159,7 +159,7 @@ class Pyscratch {
 		return vars[clone_id].cmd_args[arg_name];
 	};
 
-	getNextCommand = function({clone_id}) {
+	getNextCommand({clone_id}) {
 		if (clone_id in cmds) {
 			if (('cmd_args' in vars[clone_id]) && ('wait' in vars[clone_id].cmd_args)) {
 				name = clone_id.substring(0, clone_id.lastIndexOf("-"))
@@ -178,7 +178,7 @@ class Pyscratch {
 		return false;
 	};
 
-	getCommands = function({name}) {
+	getCommands({name}) {
 		fetchCommand(name, function(data) {
 			for (c in data.cmds) {
 				cmd_args = data.cmds[c];
@@ -236,7 +236,7 @@ class Pyscratch {
 		});
 	};
 
-	getCloneID = function({object_name, cur_id}) {
+	getCloneID({object_name, cur_id}) {
 		return fetchCloneID(object_name, cur_id, function(data) {
 			vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			vars[data.clone_id].uuid = uuid;
@@ -248,11 +248,11 @@ class Pyscratch {
 		});
 	};
 
-	sendEvent = function({event_name, event_arg, clone_id}) {
+	sendEvent({event_name, event_arg, clone_id}) {
 		deliverEvent(event_name, event_arg, clone_id);
 	};
 
-	startEvent = function() {
+	startEvent() {
 		deliverStart(function(data) {
 			uuid = data.uuid;
 			//console.log('sent start event, UUID='+uuid);
@@ -260,26 +260,26 @@ class Pyscratch {
 		});
 	};
 
-	createVar = function({name, value}) {
+	createVar({name, value}) {
 		deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
 	};
 
-	createColorVar = function({name, value}) {
+	createColorVar({name, value}) {
 		deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
 	};
 
-	scratchLog = function({l1, l2, l3}) {
+	scratchLog({l1, l2, l3}) {
 		console.log(l1,l2,l3);
 		return;
 	};
 
-	when_loaded = function() {
+	when_loaded() {
 		if (loaded)
 			return false;
 		console.log('extension starting');
