@@ -5,9 +5,9 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test8");
+console.log("test9");
 
-var $ = window.$;
+$ = window.$;
 
 class Pyscratch {
 
