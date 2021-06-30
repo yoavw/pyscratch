@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test3");
+console.log("test4");
 
 class Pyscratch {
 
@@ -18,7 +18,7 @@ class Pyscratch {
 		this.disconnected = false;
 		this.loaded = false;
 
-		window.JSshowWarning = function(){console.log('ext loaded');return true;};
+		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
 
 	fetchCloneID(obj_name, cur_id) {
@@ -124,31 +124,31 @@ class Pyscratch {
 	}
 
 	// Cleanup function when the extension is unloaded
-	_shutdown() {loaded = false;};
+	_shutdown() {loaded = false;}
 
 	// Status reporting code
 	// Use this to report missing hardware, plugin or unsupported browser
 	_getStatus() {
 		return {status: 2, msg: 'Ready'};
-	};
+	}
 
 	setVar({name,value,clone_id}) {
 		vars[clone_id][name] = value;
 		//console.log('Set '+name+' = '+value+' for '+clone_id);
 		return;
-	};
+	}
 
 	removeVar({name,clone_id}) {
 		delete vars[clone_id][name];
 		//console.log('Removed var '+name+' for '+clone_id);
 		return;
-	};
+	}
 
 	setUrl({u}) {
 		url = u;
 		//console.log('Set url to '+url);
 		return;
-	};
+	}
 
 	getCommandArg({arg_name, clone_id}) {
 		if (!clone_id.includes('-')) {
@@ -159,7 +159,7 @@ class Pyscratch {
 			return 'get_clone_id';
 		}
 		return vars[clone_id].cmd_args[arg_name];
-	};
+	}
 
 	getNextCommand({clone_id}) {
 		if (clone_id in cmds) {
@@ -178,7 +178,7 @@ class Pyscratch {
 			vars[clone_id].cmd_args = cmdq.shift();
 		}
 		return false;
-	};
+	}
 
 	getCommands({name}) {
 		fetchCommand(name, function(data) {
@@ -236,7 +236,7 @@ class Pyscratch {
 				return;
 			}
 		});
-	};
+	}
 
 	getCloneID({object_name, cur_id}) {
 		return fetchCloneID(object_name, cur_id, function(data) {
@@ -248,11 +248,11 @@ class Pyscratch {
 			//console.log('New object '+object_name+' got clone_id '+data.clone_id);
 			 return data.clone_id;
 		});
-	};
+	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
 		deliverEvent(event_name, event_arg, clone_id);
-	};
+	}
 
 	startEvent() {
 		deliverStart(function(data) {
@@ -260,26 +260,26 @@ class Pyscratch {
 			//console.log('sent start event, UUID='+uuid);
 			return;
 		});
-	};
+	}
 
 	createVar({name, value}) {
 		deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
-	};
+	}
 
 	createColorVar({name, value}) {
 		deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
-	};
+	}
 
 	scratchLog({l1, l2, l3}) {
 		console.log(l1,l2,l3);
 		return;
-	};
+	}
 
 	when_loaded() {
 		if (loaded)
@@ -287,18 +287,12 @@ class Pyscratch {
 		console.log('extension starting');
 		loaded = true;
 		return true;
-	};
+	}
 
 	getInfo() {
 		return {
-			id: 'utilities',
-			name: 'Utlities',
-
-			color1: '#8BC34A',
-			color2: '#7CB342',
-			color3: '#689F38',
-
-			menuIconURI: icon,
+			id: 'pyscratch',
+			name: 'Pyscratch',
 
 			blocks: [
 				{
@@ -509,5 +503,5 @@ class Pyscratch {
 	}
 }
 
-//Scratch.extensions.register(new Pyscratch());
+Scratch.extensions.register(new Pyscratch());
 
