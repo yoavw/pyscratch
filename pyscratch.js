@@ -5,6 +5,8 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
+console.log("test1");
+
 class Pyscratch {
 
 	constructor() {
@@ -505,33 +507,7 @@ class Pyscratch {
 			]
 		}
 	}
-
-		
-
-/*
-	// Block and block menu descriptions
-	var descriptor = {
-		blocks: [
-			//['R', 'get new clone_id for object %s current is %s ', 'getCloneID', '', ''],
-			//['w', 'fetch commands for object %s ', 'getCommands', ''],
-			//['r', 'get command arg %s for clone_id %s ', 'getCommandArg', '', ''],
-			//['r', 'get next command for clone_id %s ', 'getNextCommand', ''],
-			//[' ', 'set var %s to %s for clone_id %s ', 'setVar', '', '', ''],
-			//[' ', 'remove var %s for clone_id %s ', 'removeVar', '', ''],
-			//[' ', 'set url to %s ', 'setUrl', 'http://localhost:9000/'],
-			//['w', 'send event %s with arg %s for clone_id %s ', 'sendEvent', '', '', ''],
-			//['w', 'send start event', 'startEvent'],
-			//['w', 'create python constant %s for color %c ', 'createVar', '', ''],
-			//['w', 'create python constant %s with value %s ', 'createVar', '', ''],
-			//['h', 'Extension loaded', 'when_loaded'],
-			//[' ', 'log %s %s %s ', 'scratchLog', '', '', ''],
-		],
-		menus: {
-		}
-	};
-*/
-
 }
 
-Scratch.extensions.register(new Pyscratch());
+//Scratch.extensions.register(new Pyscratch());
 
