@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test4");
+console.log("test5");
 
 class Pyscratch {
 
@@ -25,7 +25,7 @@ class Pyscratch {
 
 		$.ajax({
 			url: url+'new',
-			data: { 'uuid' : uuid, 'name' : obj_name, 'cur_clone_id' : cur_id },
+			data: { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id },
 			dataType: 'json',
 			method: 'POST',
 			cache: false,
@@ -40,19 +40,19 @@ class Pyscratch {
 
 	fetchCommand(name) {
 
-		v = {'uuid':uuid, 'name':name};
+		v = {'uuid':this.uuid, 'name':name};
 
 		comp = [];
-		if (!(name in completed))
-			completed[name] = []
-		while ((w = completed[name].shift()))
+		if (!(name in this.completed))
+			this.completed[name] = []
+		while ((w = this.completed[name].shift()))
 			comp.push(w);
 		v['completed'] = JSON.stringify(comp);
 
 		// Get vars for all clones of this object
-		for (k in vars) {
+		for (k in this.vars) {
 			if (k.startsWith(name+'-')) {
-				v[k] = JSON.stringify(vars[k]);
+				v[k] = JSON.stringify(this.vars[k]);
 			}
 		}
 
@@ -76,7 +76,7 @@ class Pyscratch {
 
 		$.ajax({
 			url: url+'event',
-			data: { 'uuid' : uuid, 'clone_id' : clone_id, 'event' : event_name, 'arg' : event_arg, 'vars' : JSON.stringify(vars[clone_id]) },
+			data: { 'uuid' : this.uuid, 'clone_id' : clone_id, 'event' : event_name, 'arg' : event_arg, 'vars' : JSON.stringify(this.vars[clone_id]) },
 			dataType: 'json',
 			method: 'POST',
 			cache: false,
@@ -93,7 +93,7 @@ class Pyscratch {
 
 		$.ajax({
 			url: url+'newvar',
-			data: { 'uuid' : uuid, 'name' : name, 'value' : value },
+			data: { 'uuid' : this.uuid, 'name' : name, 'value' : value },
 			dataType: 'json',
 			method: 'POST',
 			cache: false,
@@ -110,7 +110,7 @@ class Pyscratch {
 
 		$.ajax({
 			url: url+'start',
-			data: { 'uuid' : uuid },
+			data: { 'uuid' : this.uuid },
 			dataType: 'json',
 			method: 'POST',
 			cache: false,
@@ -124,7 +124,7 @@ class Pyscratch {
 	}
 
 	// Cleanup function when the extension is unloaded
-	_shutdown() {loaded = false;}
+	_shutdown() {this.loaded = false;}
 
 	// Status reporting code
 	// Use this to report missing hardware, plugin or unsupported browser
@@ -133,20 +133,20 @@ class Pyscratch {
 	}
 
 	setVar({name,value,clone_id}) {
-		vars[clone_id][name] = value;
+		this.vars[clone_id][name] = value;
 		//console.log('Set '+name+' = '+value+' for '+clone_id);
 		return;
 	}
 
 	removeVar({name,clone_id}) {
-		delete vars[clone_id][name];
+		delete this.vars[clone_id][name];
 		//console.log('Removed var '+name+' for '+clone_id);
 		return;
 	}
 
 	setUrl({u}) {
-		url = u;
-		//console.log('Set url to '+url);
+		this.url = u;
+		console.log('Set url to '+this.url);
 		return;
 	}
 
@@ -154,28 +154,28 @@ class Pyscratch {
 		if (!clone_id.includes('-')) {
 			// First object (non-clone) on first run
 			return 'get_clone_id';
-		} else if (!(clone_id in cmds)) {
+		} else if (!(clone_id in this.cmds)) {
 			// Unknown object (python restarted, scratch hasn't)
 			return 'get_clone_id';
 		}
-		return vars[clone_id].cmd_args[arg_name];
+		return this.vars[clone_id].cmd_args[arg_name];
 	}
 
 	getNextCommand({clone_id}) {
-		if (clone_id in cmds) {
-			if (('cmd_args' in vars[clone_id]) && ('wait' in vars[clone_id].cmd_args)) {
+		if (clone_id in this.cmds) {
+			if (('cmd_args' in this.vars[clone_id]) && ('wait' in this.vars[clone_id].cmd_args)) {
 				name = clone_id.substring(0, clone_id.lastIndexOf("-"))
-				completed[name].push(vars[clone_id].cmd_args.wait);
-			} else if (('cmd_args' in vars[clone_id]) && ('cmd' in vars[clone_id].cmd_args) &&
-					   vars[clone_id].cmd_args.cmd == 'DISCONNECTED') {
-				disconnected = false;	// Time to retry
+				this.completed[name].push(this.vars[clone_id].cmd_args.wait);
+			} else if (('cmd_args' in this.vars[clone_id]) && ('cmd' in this.vars[clone_id].cmd_args) &&
+					   this.vars[clone_id].cmd_args.cmd == 'DISCONNECTED') {
+				this.disconnected = false;	// Time to retry
 			}
-			cmdq = cmds[clone_id];
+			cmdq = this.cmds[clone_id];
 			if (cmdq.length == 0) {
-				vars[clone_id].cmd_args = {};
+				this.vars[clone_id].cmd_args = {};
 				return true;	// Abort loop until next broadcast
 			}
-			vars[clone_id].cmd_args = cmdq.shift();
+			this.vars[clone_id].cmd_args = cmdq.shift();
 		}
 		return false;
 	}
@@ -188,45 +188,45 @@ class Pyscratch {
 				if (cmd_args.cmd == 'forget') {
 					// Delete stale clone vars
 					//console.log("forgetting "+cmd_args.forget_clone_id);
-					delete vars[cmd_args.forget_clone_id];
-					delete cmds[cmd_args.forget_clone_id];
-				} else if (cmd_args.cmd == 'js' && clone_id in vars && 'script' in cmd_args) {
+					delete this.vars[cmd_args.forget_clone_id];
+					delete this.cmds[cmd_args.forget_clone_id];
+				} else if (cmd_args.cmd == 'js' && clone_id in this.vars && 'script' in cmd_args) {
 					try {
 						res = eval(cmd_args.script);
 						if (res)
-							vars[clone_id]['js_result'] = res;
+							this.vars[clone_id]['js_result'] = res;
 						else
-							vars[clone_id]['js_result'] = '';
+							this.vars[clone_id]['js_result'] = '';
 					} catch(err) {
-						vars[clone_id]['js_result'] = 'error: '+err;
+						this.vars[clone_id]['js_result'] = 'error: '+err;
 					}
 				} else if (cmd_args.cmd == 'flush') {
-					for (k in cmds) {
+					for (k in this.cmds) {
 						//if (k.startsWith(name+'-')) {
-							cmds[k] = [];
+							this.cmds[k] = [];
 						//}
 					}
 				} else if (cmd_args.cmd == 'DISCONNECTED') {
-					if (!disconnected) {
-						for (k in cmds) {
+					if (!this.disconnected) {
+						for (k in this.cmds) {
 							if (!k.startsWith('Stage-')) {
 								// Non-stage objects "say" the error.
-								cmds[k].push(cmd_args);
+								this.cmds[k].push(cmd_args);
 							} else {
 								// Try to restart the session, in case the server was restarted.
-								loaded = false;
+								this.loaded = false;
 							}
 						}
-						disconnected = true;
+						this.disconnected = true;
 					}
-				} else if (clone_id in cmds) {
-					disconnected = false;
-					cmds[clone_id].push(cmd_args);
+				} else if (clone_id in this.cmds) {
+					this.disconnected = false;
+					this.cmds[clone_id].push(cmd_args);
 				} else {
 					console.log("ERROR: got command "+JSON.stringify(cmd_args)+" for unknown "+clone_id);
 				}
 			}
-			if (disconnected) {
+			if (this.disconnected) {
 				new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
 					console.log("Retrying server");
 					return;
@@ -240,11 +240,11 @@ class Pyscratch {
 
 	getCloneID({object_name, cur_id}) {
 		return fetchCloneID(object_name, cur_id, function(data) {
-			vars[data.clone_id] = { 'clone_id' : data.clone_id };
-			vars[data.clone_id].uuid = uuid;
-			cmds[data.clone_id] = [];
-			if (!(object_name in completed))
-				completed[object_name] = []
+			this.vars[data.clone_id] = { 'clone_id' : data.clone_id };
+			this.vars[data.clone_id].uuid = this.uuid;
+			this.cmds[data.clone_id] = [];
+			if (!(object_name in this.completed))
+				this.completed[object_name] = []
 			//console.log('New object '+object_name+' got clone_id '+data.clone_id);
 			 return data.clone_id;
 		});
@@ -256,7 +256,7 @@ class Pyscratch {
 
 	startEvent() {
 		deliverStart(function(data) {
-			uuid = data.uuid;
+			this.uuid = data.uuid;
 			//console.log('sent start event, UUID='+uuid);
 			return;
 		});
@@ -282,10 +282,10 @@ class Pyscratch {
 	}
 
 	when_loaded() {
-		if (loaded)
+		if (this.loaded)
 			return false;
 		console.log('extension starting');
-		loaded = true;
+		this.loaded = true;
 		return true;
 	}
 
