@@ -5,30 +5,29 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test13");
+console.log("test14");
 
 (function() {
 	console.log("func1");
 })();
 
-console.log(window);
+console.log(document);
 
-/*
 (function() {
     // Load the script
     var script = document.createElement("SCRIPT");
     script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
     script.type = 'text/javascript';
     script.onload = function() {
-        var $ = window.jQuery;
-		console(window);
-		console(window.jQuery);
+		console.log("loaded jquery");
+        //var $ = window.jQuery;
+		//console(window);
+		//console(window.jQuery);
 		//console.log($);
         // Use $ here...
     };
     document.getElementsByTagName("head")[0].appendChild(script);
 })();
-*/
 
 class Pyscratch {
 
