@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test1");
+console.log("test3");
 
 class Pyscratch {
 
@@ -509,5 +509,5 @@ class Pyscratch {
 	}
 }
 
-Scratch.extensions.register(new Pyscratch());
+//Scratch.extensions.register(new Pyscratch());
 
