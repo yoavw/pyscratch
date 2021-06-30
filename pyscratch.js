@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test26");
+console.log("test27");
 
 class Pyscratch {
 
@@ -32,7 +32,7 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(err => 'ERROR');
+		});//.then(res => res.json()).catch(err => 'ERROR');
 		console.log('returning ',response);
 		return response;
 	}
