@@ -5,13 +5,15 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test12");
-console.log(window);
+console.log("test13");
 
 (function() {
 	console.log("func1");
 })();
 
+console.log(window);
+
+/*
 (function() {
     // Load the script
     var script = document.createElement("SCRIPT");
@@ -26,6 +28,7 @@ console.log(window);
     };
     document.getElementsByTagName("head")[0].appendChild(script);
 })();
+*/
 
 class Pyscratch {
 
