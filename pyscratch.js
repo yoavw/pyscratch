@@ -5,7 +5,9 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test6");
+console.log("test7");
+
+var $ = require("jquery")(window);
 
 class Pyscratch {
 
