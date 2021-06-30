@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test5");
+console.log("test6");
 
 class Pyscratch {
 
@@ -181,7 +181,7 @@ class Pyscratch {
 	}
 
 	getCommands({name}) {
-		fetchCommand(name, function(data) {
+		this.fetchCommand(name, function(data) {
 			for (c in data.cmds) {
 				cmd_args = data.cmds[c];
 				clone_id = cmd_args.clone_id;
@@ -239,7 +239,7 @@ class Pyscratch {
 	}
 
 	getCloneID({object_name, cur_id}) {
-		return fetchCloneID(object_name, cur_id, function(data) {
+		return this.fetchCloneID(object_name, cur_id, function(data) {
 			this.vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			this.vars[data.clone_id].uuid = this.uuid;
 			this.cmds[data.clone_id] = [];
@@ -251,11 +251,11 @@ class Pyscratch {
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
-		deliverEvent(event_name, event_arg, clone_id);
+		this.deliverEvent(event_name, event_arg, clone_id);
 	}
 
 	startEvent() {
-		deliverStart(function(data) {
+		this.deliverStart(function(data) {
 			this.uuid = data.uuid;
 			//console.log('sent start event, UUID='+uuid);
 			return;
@@ -263,14 +263,14 @@ class Pyscratch {
 	}
 
 	createVar({name, value}) {
-		deliverVar(name, value, function(data) {
+		this.deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
 	}
 
 	createColorVar({name, value}) {
-		deliverVar(name, value, function(data) {
+		this.deliverVar(name, value, function(data) {
 			//console.log('created var '+name+' = '+value);
 			return;
 		});
