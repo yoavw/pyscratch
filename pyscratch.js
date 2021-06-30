@@ -5,7 +5,12 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test11");
+console.log("test12");
+console.log(window);
+
+(function() {
+	console.log("func1");
+})();
 
 (function() {
     // Load the script
@@ -14,7 +19,9 @@ console.log("test11");
     script.type = 'text/javascript';
     script.onload = function() {
         var $ = window.jQuery;
-		console.log($);
+		console(window);
+		console(window.jQuery);
+		//console.log($);
         // Use $ here...
     };
     document.getElementsByTagName("head")[0].appendChild(script);
