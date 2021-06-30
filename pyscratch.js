@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test10");
+console.log("test11");
 
 (function() {
     // Load the script
@@ -14,12 +14,11 @@ console.log("test10");
     script.type = 'text/javascript';
     script.onload = function() {
         var $ = window.jQuery;
+		console.log($);
         // Use $ here...
     };
     document.getElementsByTagName("head")[0].appendChild(script);
 })();
-
-var $ = window.jQuery;
 
 class Pyscratch {
 
