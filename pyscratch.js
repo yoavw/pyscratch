@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test25");
+console.log("test26");
 
 class Pyscratch {
 
@@ -21,7 +21,7 @@ class Pyscratch {
 		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
 
-	fetchCloneID(obj_name, cur_id, callback) {
+	fetchCloneID(obj_name, cur_id) {
 
 		var data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
 		const response = fetch(this.url+'new', {
@@ -32,9 +32,9 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(err => '');
+		}).then(res => res.json()).catch(err => 'ERROR');
 		console.log('returning ',response);
-		callback(response);
+		return response;
 	}
 
 	fetchCommand(name) {
@@ -238,16 +238,15 @@ class Pyscratch {
 	}
 
 	getCloneID({object_name, cur_id}) {
-		return this.fetchCloneID(object_name, cur_id, function(data) {
-			console.log(data);
-			this.vars[data.clone_id] = { 'clone_id' : data.clone_id };
-			this.vars[data.clone_id].uuid = this.uuid;
-			this.cmds[data.clone_id] = [];
-			if (!(object_name in this.completed))
-				this.completed[object_name] = []
-			//console.log('New object '+object_name+' got clone_id '+data.clone_id);
-			 return data.clone_id;
-		});
+		var data = this.fetchCloneID(object_name, cur_id);
+		console.log(data);
+		this.vars[data.clone_id] = { 'clone_id' : data.clone_id };
+		this.vars[data.clone_id].uuid = this.uuid;
+		this.cmds[data.clone_id] = [];
+		if (!(object_name in this.completed))
+			this.completed[object_name] = []
+		//console.log('New object '+object_name+' got clone_id '+data.clone_id);
+		return data.clone_id;
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
