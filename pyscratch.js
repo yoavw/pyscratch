@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test36");
+console.log("test37");
 
 class Pyscratch {
 
@@ -33,7 +33,7 @@ class Pyscratch {
 			body: JSON.stringify(data)
 		}).then(res => res.json()).catch(error => {return {"clone_id":"DISCONNECTED","error":textStatus} });
 		console.log('returning ',response);
-		callback(response, this);
+		response.then(callback(res, this));
 	}
 
 	fetchCommand(name) {
