@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test40");
+console.log("test41");
 
 class Pyscratch {
 
@@ -39,6 +39,7 @@ class Pyscratch {
 	fetchCommand(name, callback) {
 		var v = {'uuid':this.uuid, 'name':name};
 		var comp = [];
+		var w;
 		if (!(name in this.completed))
 			this.completed[name] = []
 		while ((w = this.completed[name].shift()))
