@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test34");
+console.log("test35");
 
 class Pyscratch {
 
@@ -21,8 +21,7 @@ class Pyscratch {
 		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
 
-	fetchCloneID(obj_name, cur_id) {
-
+	fetchCloneID(obj_name, cur_id, callback) {
 		var data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
 		const response = fetch(this.url+'new', {
 			method: 'POST',
@@ -32,9 +31,9 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(error => {console.error('Fetch error:', error); });
+		}).then(res => res.json()).catch(error => {return {"clone_id":"DISCONNECTED","error":textStatus} });
 		console.log('returning ',response);
-		return res;
+		callback(response, this);
 	}
 
 	fetchCommand(name) {
@@ -238,15 +237,16 @@ class Pyscratch {
 	}
 
 	getCloneID({object_name, cur_id}) {
-		var data = this.fetchCloneID(object_name, cur_id);
-		console.log(data);
-		this.vars[data.clone_id] = { 'clone_id' : data.clone_id };
-		this.vars[data.clone_id].uuid = this.uuid;
-		this.cmds[data.clone_id] = [];
-		if (!(object_name in this.completed))
-			this.completed[object_name] = []
-		//console.log('New object '+object_name+' got clone_id '+data.clone_id);
-		return data.clone_id;
+		return fetchCloneID(object_name, cur_id, function(data, pyscratch) {
+			console.log(data);
+			pyscratch.vars[data.clone_id] = { 'clone_id' : data.clone_id };
+			pyscratch.vars[data.clone_id].uuid = pyscratch.uuid;
+			pyscratch.cmds[data.clone_id] = [];
+			if (!(object_name in pyscratch.completed))
+				pyscratch.completed[object_name] = []
+			console.log('New object '+object_name+' got clone_id '+data.clone_id);
+			return data.clone_id;
+		});
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
