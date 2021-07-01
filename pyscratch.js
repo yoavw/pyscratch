@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test43");
+console.log("test44");
 
 class Pyscratch {
 
@@ -39,7 +39,7 @@ class Pyscratch {
 	fetchCommand(name, callback) {
 		var v = {'uuid':this.uuid, 'name':name};
 		var comp = [];
-		var w;
+		var w,k;
 		if (!(name in this.completed))
 			this.completed[name] = []
 		while ((w = this.completed[name].shift()))
@@ -173,6 +173,7 @@ class Pyscratch {
 
 	getCommands({name}) {
 		this.fetchCommand(name, function(data, pyscratch) {
+			var c,k;
 			console.log(data);
 			for (c in data.cmds) {
 				cmd_args = data.cmds[c];
@@ -249,7 +250,7 @@ class Pyscratch {
 	startEvent() {
 		this.deliverStart(function(data, pyscratch) {
 			pyscratch.uuid = data.uuid;
-			console.log('sent start event, UUID='+uuid);
+			console.log('sent start event, UUID='+pyscratch.uuid);
 			return;
 		});
 	}
