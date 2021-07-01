@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test30");
+console.log("test31");
 
 class Pyscratch {
 
@@ -32,7 +32,7 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => {console.log('res: ',res);}).catch(error => {
+		}).then(res => {console.log('res: ',res.json());}).catch(error => {
     console.error('There has been a problem with your fetch operation:', error);
   });
 		console.log('returning ',response);
