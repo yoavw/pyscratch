@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test44");
+console.log("test45");
 
 class Pyscratch {
 
@@ -82,7 +82,7 @@ class Pyscratch {
 		}).then(res => callback(res, this));
 	}
 
-	deliverVar(name, value) {
+	deliverVar(name, value, callback) {
 		var d = { 'uuid' : this.uuid, 'name' : name, 'value' : value };
 
 		fetch(this.url+'newvar', {
