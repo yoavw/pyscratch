@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test42");
+console.log("test43");
 
 class Pyscratch {
 
@@ -98,7 +98,7 @@ class Pyscratch {
 		}).then(res => callback(res, this));
 	}
 
-	deliverStart() {
+	deliverStart(callback) {
 		var d = { 'uuid' : this.uuid };
 
 		fetch(this.url+'start', {
