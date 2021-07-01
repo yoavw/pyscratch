@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test32");
+console.log("test33");
 
 class Pyscratch {
 
@@ -35,7 +35,7 @@ class Pyscratch {
 		}).then(res => {console.log('res: ',res.json());}).catch(error => {
     console.error('There has been a problem with your fetch operation:', error);
   });
-		const res = resolve(response);
+		const res = Promise.resolve(response);
 		console.log('returning ',res);
 		return res;
 	}
