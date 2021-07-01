@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test39");
+console.log("test40");
 
 class Pyscratch {
 
@@ -23,7 +23,7 @@ class Pyscratch {
 
 	fetchCloneID(obj_name, cur_id, callback) {
 		var data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
-		const response = fetch(this.url+'new', {
+		fetch(this.url+'new', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -31,13 +31,13 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(error => {return {"clone_id":"DISCONNECTED","error":textStatus} }).then(res => callback(res, this));
+		}).then(res => res.json()).catch(error => {
+			return {"clone_id":"DISCONNECTED","error":error};
+		}).then(res => callback(res, this));
 	}
 
-	fetchCommand(name) {
-
+	fetchCommand(name, callback) {
 		var v = {'uuid':this.uuid, 'name':name};
-
 		var comp = [];
 		if (!(name in this.completed))
 			this.completed[name] = []
@@ -52,71 +52,65 @@ class Pyscratch {
 			}
 		}
 
-		$.ajax({
-			url: url+'fetchcmd',
-			data: v,
-			dataType: 'json',
+		fetch(this.url+'fetchcmd', {
 			method: 'POST',
-			cache: false,
-			success: function(data) {
-				return data;
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function (textStatus, errorThrown) {
-				console.log('Failed fetch for '+name);
-				 return {"clone_id":"UNKNOWN","cmds":[{"cmd":"DISCONNECTED","clone_id":"UNKNOWN"}],"error":textStatus};
-			}
-		});
+			body: JSON.stringify(v)
+		}).then(res => res.json()).catch(error => {
+			return {"clone_id":"UNKNOWN","cmds":[{"cmd":"DISCONNECTED","clone_id":"UNKNOWN"}],"error":error};
+		}).then(res => callback(res, this));
 	}
 
-	deliverEvent(event_name, event_arg, clone_id) {
+	deliverEvent(event_name, event_arg, clone_id, callback) {
+		var d = { 'uuid' : this.uuid, 'clone_id' : clone_id, 'event' : event_name, 'arg' : event_arg, 'vars' : JSON.stringify(this.vars[clone_id]) };
 
-		$.ajax({
-			url: url+'event',
-			data: { 'uuid' : this.uuid, 'clone_id' : clone_id, 'event' : event_name, 'arg' : event_arg, 'vars' : JSON.stringify(this.vars[clone_id]) },
-			dataType: 'json',
+		fetch(this.url+'event', {
 			method: 'POST',
-			cache: false,
-			success: function(data) {
-				return data;
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function (textStatus, errorThrown) {
-				return {"clone_id":"DISCONNECTED","error":textStatus};
-			}
-		});
+			body: JSON.stringify(d)
+		}).then(res => res.json()).catch(error => {
+			return {"clone_id":"DISCONNECTED","error":error};
+		}).then(res => callback(res, this));
 	}
 
 	deliverVar(name, value) {
+		d = { 'uuid' : this.uuid, 'name' : name, 'value' : value };
 
-		$.ajax({
-			url: url+'newvar',
-			data: { 'uuid' : this.uuid, 'name' : name, 'value' : value },
-			dataType: 'json',
+		fetch(this.url+'newvar', {
 			method: 'POST',
-			cache: false,
-			success: function(data) {
-				return data;
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function (textStatus, errorThrown) {
-				return {"clone_id":"DISCONNECTED","error":textStatus};
-			}
-		});
+			body: JSON.stringify(d)
+		}).then(res => res.json()).catch(error => {
+			return {"clone_id":"DISCONNECTED","error":error};
+		}).then(res => callback(res, this));
 	}
 
 	deliverStart() {
+		d = { 'uuid' : this.uuid };
 
-		$.ajax({
-			url: url+'start',
-			data: { 'uuid' : this.uuid },
-			dataType: 'json',
+		fetch(this.url+'start', {
 			method: 'POST',
-			cache: false,
-			success: function(data) {
-				return data;
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
 			},
-			error: function (textStatus, errorThrown) {
-				return {"clone_id":"DISCONNECTED","error":textStatus};
-			}
-		});
+			body: JSON.stringify(d)
+		}).then(res => res.json()).catch(error => {
+			return {"clone_id":"DISCONNECTED","error":error};
+		}).then(res => callback(res, this));
 	}
 
 	// Cleanup function when the extension is unloaded
@@ -177,52 +171,53 @@ class Pyscratch {
 	}
 
 	getCommands({name}) {
-		this.fetchCommand(name, function(data) {
+		this.fetchCommand(name, function(data, pyscratch) {
+			console.log(data);
 			for (c in data.cmds) {
 				cmd_args = data.cmds[c];
 				clone_id = cmd_args.clone_id;
 				if (cmd_args.cmd == 'forget') {
 					// Delete stale clone vars
 					//console.log("forgetting "+cmd_args.forget_clone_id);
-					delete this.vars[cmd_args.forget_clone_id];
-					delete this.cmds[cmd_args.forget_clone_id];
-				} else if (cmd_args.cmd == 'js' && clone_id in this.vars && 'script' in cmd_args) {
+					delete pyscratch.vars[cmd_args.forget_clone_id];
+					delete pyscratch.cmds[cmd_args.forget_clone_id];
+				} else if (cmd_args.cmd == 'js' && clone_id in pyscratch.vars && 'script' in cmd_args) {
 					try {
 						res = eval(cmd_args.script);
 						if (res)
-							this.vars[clone_id]['js_result'] = res;
+							pyscratch.vars[clone_id]['js_result'] = res;
 						else
-							this.vars[clone_id]['js_result'] = '';
+							pyscratch.vars[clone_id]['js_result'] = '';
 					} catch(err) {
-						this.vars[clone_id]['js_result'] = 'error: '+err;
+						pyscratch.vars[clone_id]['js_result'] = 'error: '+err;
 					}
 				} else if (cmd_args.cmd == 'flush') {
-					for (k in this.cmds) {
+					for (k in pyscratch.cmds) {
 						//if (k.startsWith(name+'-')) {
-							this.cmds[k] = [];
+							pyscratch.cmds[k] = [];
 						//}
 					}
 				} else if (cmd_args.cmd == 'DISCONNECTED') {
-					if (!this.disconnected) {
-						for (k in this.cmds) {
+					if (!pyscratch.disconnected) {
+						for (k in pyscratch.cmds) {
 							if (!k.startsWith('Stage-')) {
 								// Non-stage objects "say" the error.
-								this.cmds[k].push(cmd_args);
+								pyscratch.cmds[k].push(cmd_args);
 							} else {
 								// Try to restart the session, in case the server was restarted.
-								this.loaded = false;
+								pyscratch.loaded = false;
 							}
 						}
-						this.disconnected = true;
+						pyscratch.disconnected = true;
 					}
-				} else if (clone_id in this.cmds) {
-					this.disconnected = false;
-					this.cmds[clone_id].push(cmd_args);
+				} else if (clone_id in pyscratch.cmds) {
+					pyscratch.disconnected = false;
+					pyscratch.cmds[clone_id].push(cmd_args);
 				} else {
 					console.log("ERROR: got command "+JSON.stringify(cmd_args)+" for unknown "+clone_id);
 				}
 			}
-			if (this.disconnected) {
+			if (pyscratch.disconnected) {
 				new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
 					console.log("Retrying server");
 					return;
@@ -236,9 +231,6 @@ class Pyscratch {
 
 	getCloneID({object_name, cur_id}) {
 		return this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
-			console.log(data);
-			console.log(pyscratch);
-			console.log(this);
 			pyscratch.vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			pyscratch.vars[data.clone_id].uuid = pyscratch.uuid;
 			pyscratch.cmds[data.clone_id] = [];
@@ -250,27 +242,27 @@ class Pyscratch {
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
-		this.deliverEvent(event_name, event_arg, clone_id);
+		this.deliverEvent(event_name, event_arg, clone_id, function(data, pyscratch) {});
 	}
 
 	startEvent() {
-		this.deliverStart(function(data) {
-			this.uuid = data.uuid;
-			//console.log('sent start event, UUID='+uuid);
+		this.deliverStart(function(data, pyscratch) {
+			pyscratch.uuid = data.uuid;
+			console.log('sent start event, UUID='+uuid);
 			return;
 		});
 	}
 
 	createVar({name, value}) {
-		this.deliverVar(name, value, function(data) {
-			//console.log('created var '+name+' = '+value);
+		this.deliverVar(name, value, function(data, pyscratch) {
+			console.log('created var '+name+' = '+value);
 			return;
 		});
 	}
 
 	createColorVar({name, value}) {
-		this.deliverVar(name, value, function(data) {
-			//console.log('created var '+name+' = '+value);
+		this.deliverVar(name, value, function(data, pyscratch) {
+			console.log('created color var '+name+' = '+value);
 			return;
 		});
 	}
