@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test41");
+console.log("test42");
 
 class Pyscratch {
 
@@ -83,7 +83,7 @@ class Pyscratch {
 	}
 
 	deliverVar(name, value) {
-		d = { 'uuid' : this.uuid, 'name' : name, 'value' : value };
+		var d = { 'uuid' : this.uuid, 'name' : name, 'value' : value };
 
 		fetch(this.url+'newvar', {
 			method: 'POST',
@@ -99,7 +99,7 @@ class Pyscratch {
 	}
 
 	deliverStart() {
-		d = { 'uuid' : this.uuid };
+		var d = { 'uuid' : this.uuid };
 
 		fetch(this.url+'start', {
 			method: 'POST',
