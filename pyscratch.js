@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test37");
+console.log("test38");
 
 class Pyscratch {
 
@@ -31,9 +31,7 @@ class Pyscratch {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(error => {return {"clone_id":"DISCONNECTED","error":textStatus} });
-		console.log('returning ',response);
-		response.then(callback(res, this));
+		}).then(res => res.json()).catch(error => {return {"clone_id":"DISCONNECTED","error":textStatus} }).then(res => callback(res, this));
 	}
 
 	fetchCommand(name) {
@@ -239,6 +237,7 @@ class Pyscratch {
 	getCloneID({object_name, cur_id}) {
 		return this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
 			console.log(data);
+			console.log(pyscratch);
 			pyscratch.vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			pyscratch.vars[data.clone_id].uuid = pyscratch.uuid;
 			pyscratch.cmds[data.clone_id] = [];
