@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test45");
+console.log("test46");
 
 class Pyscratch {
 
@@ -338,7 +338,7 @@ class Pyscratch {
 				{
 					opcode: 'getNextCommand',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: Scratch.BlockType.BOOLEAN,
 
 					text: 'get next command for clone_id [clone_id]',
 					arguments: {
