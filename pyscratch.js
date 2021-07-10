@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test46");
+console.log("test47");
 
 class Pyscratch {
 
@@ -101,6 +101,7 @@ class Pyscratch {
 	deliverStart(callback) {
 		var d = { 'uuid' : this.uuid };
 
+		console.log("YW: 0");
 		fetch(this.url+'start', {
 			method: 'POST',
 			mode: 'cors',
@@ -110,6 +111,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(d)
 		}).then(res => res.json()).catch(error => {
+			console.log("YW: 1");
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
@@ -249,6 +251,7 @@ class Pyscratch {
 
 	startEvent() {
 		this.deliverStart(function(data, pyscratch) {
+			console.log("YW: 2");
 			pyscratch.uuid = data.uuid;
 			console.log('sent start event, UUID='+pyscratch.uuid);
 			return;
