@@ -17,6 +17,8 @@ class Pyscratch {
 		this.completed = {};
 		this.disconnected = false;
 		this.loaded = false;
+		this.fetching = {};
+		this.concurrency_check = 0;
 
 		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
@@ -177,7 +179,12 @@ class Pyscratch {
 	}
 
 	getCommands({name}) {
-		return this.fetchCommand(name, function(data, pyscratch) {
+		if (name in this.fetching)
+			return;
+		this.concurrency_check++;
+		console.log(this.concurrency_check);
+		this.fetching[name] = true;
+		this.fetchCommand(name, function(data, pyscratch) {
 			var c,k;
 			//console.log(data);
 			for (c in data.cmds) {
@@ -224,6 +231,8 @@ class Pyscratch {
 					console.log("ERROR: got command "+JSON.stringify(cmd_args)+" for unknown "+clone_id);
 				}
 			}
+			pyscratch.concurrency_check--;
+			delete pyscratch.fetching[data.name];
 			if (pyscratch.disconnected) {
 				new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
 					console.log("Retrying server");
