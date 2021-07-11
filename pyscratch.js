@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test50");
+console.log("test51");
 
 class Pyscratch {
 
@@ -161,7 +161,7 @@ class Pyscratch {
 					   this.vars[clone_id].cmd_args.cmd == 'DISCONNECTED') {
 				this.disconnected = false;	// Time to retry
 			}
-			cmdq = this.cmds[clone_id];
+			var cmdq = this.cmds[clone_id];
 			if (cmdq.length == 0) {
 				this.vars[clone_id].cmd_args = {};
 				return true;	// Abort loop until next broadcast
@@ -176,8 +176,8 @@ class Pyscratch {
 			var c,k;
 			console.log(data);
 			for (c in data.cmds) {
-				cmd_args = data.cmds[c];
-				clone_id = cmd_args.clone_id;
+				var cmd_args = data.cmds[c];
+				var clone_id = cmd_args.clone_id;
 				if (cmd_args.cmd == 'forget') {
 					// Delete stale clone vars
 					//console.log("forgetting "+cmd_args.forget_clone_id);
