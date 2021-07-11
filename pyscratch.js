@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test47");
+console.log("test48");
 
 class Pyscratch {
 
@@ -101,7 +101,6 @@ class Pyscratch {
 	deliverStart(callback) {
 		var d = { 'uuid' : this.uuid };
 
-		console.log("YW: 0");
 		fetch(this.url+'start', {
 			method: 'POST',
 			mode: 'cors',
@@ -111,7 +110,6 @@ class Pyscratch {
 			},
 			body: JSON.stringify(d)
 		}).then(res => res.json()).catch(error => {
-			console.log("YW: 1");
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
@@ -234,7 +232,7 @@ class Pyscratch {
 	}
 
 	getCloneID({object_name, cur_id}) {
-		return this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
+		ret = this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
 			pyscratch.vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			pyscratch.vars[data.clone_id].uuid = pyscratch.uuid;
 			pyscratch.cmds[data.clone_id] = [];
@@ -243,6 +241,8 @@ class Pyscratch {
 			console.log('New object '+object_name+' got clone_id '+data.clone_id);
 			return data.clone_id;
 		});
+		console.log(ret);
+		return ret;
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
@@ -251,7 +251,6 @@ class Pyscratch {
 
 	startEvent() {
 		this.deliverStart(function(data, pyscratch) {
-			console.log("YW: 2");
 			pyscratch.uuid = data.uuid;
 			console.log('sent start event, UUID='+pyscratch.uuid);
 			return;
