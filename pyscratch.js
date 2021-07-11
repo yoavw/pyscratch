@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test51");
+console.log("test52");
 
 class Pyscratch {
 
@@ -155,7 +155,7 @@ class Pyscratch {
 	getNextCommand({clone_id}) {
 		if (clone_id in this.cmds) {
 			if (('cmd_args' in this.vars[clone_id]) && ('wait' in this.vars[clone_id].cmd_args)) {
-				name = clone_id.substring(0, clone_id.lastIndexOf("-"))
+				var name = clone_id.substring(0, clone_id.lastIndexOf("-"))
 				this.completed[name].push(this.vars[clone_id].cmd_args.wait);
 			} else if (('cmd_args' in this.vars[clone_id]) && ('cmd' in this.vars[clone_id].cmd_args) &&
 					   this.vars[clone_id].cmd_args.cmd == 'DISCONNECTED') {
@@ -174,7 +174,7 @@ class Pyscratch {
 	getCommands({name}) {
 		this.fetchCommand(name, function(data, pyscratch) {
 			var c,k;
-			console.log(data);
+			//console.log(data);
 			for (c in data.cmds) {
 				var cmd_args = data.cmds[c];
 				var clone_id = cmd_args.clone_id;
@@ -185,7 +185,7 @@ class Pyscratch {
 					delete pyscratch.cmds[cmd_args.forget_clone_id];
 				} else if (cmd_args.cmd == 'js' && clone_id in pyscratch.vars && 'script' in cmd_args) {
 					try {
-						res = eval(cmd_args.script);
+						var res = eval(cmd_args.script);
 						if (res)
 							pyscratch.vars[clone_id]['js_result'] = res;
 						else
@@ -241,7 +241,7 @@ class Pyscratch {
 			console.log('New object '+object_name+' got clone_id '+data.clone_id);
 			return data.clone_id;
 		});
-		console.log(ret);
+		//console.log(ret);
 		return ret;
 	}
 
