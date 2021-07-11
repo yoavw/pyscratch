@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test49");
+console.log("test50");
 
 class Pyscratch {
 
@@ -23,7 +23,7 @@ class Pyscratch {
 
 	fetchCloneID(obj_name, cur_id, callback) {
 		var data = { 'uuid' : this.uuid, 'name' : obj_name, 'cur_clone_id' : cur_id };
-		fetch(this.url+'new', {
+		return fetch(this.url+'new', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -53,7 +53,7 @@ class Pyscratch {
 			}
 		}
 
-		fetch(this.url+'fetchcmd', {
+		return fetch(this.url+'fetchcmd', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -69,7 +69,7 @@ class Pyscratch {
 	deliverEvent(event_name, event_arg, clone_id, callback) {
 		var d = { 'uuid' : this.uuid, 'clone_id' : clone_id, 'event' : event_name, 'arg' : event_arg, 'vars' : JSON.stringify(this.vars[clone_id]) };
 
-		fetch(this.url+'event', {
+		return fetch(this.url+'event', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -85,7 +85,7 @@ class Pyscratch {
 	deliverVar(name, value, callback) {
 		var d = { 'uuid' : this.uuid, 'name' : name, 'value' : value };
 
-		fetch(this.url+'newvar', {
+		return fetch(this.url+'newvar', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -101,7 +101,7 @@ class Pyscratch {
 	deliverStart(callback) {
 		var d = { 'uuid' : this.uuid };
 
-		fetch(this.url+'start', {
+		return fetch(this.url+'start', {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
