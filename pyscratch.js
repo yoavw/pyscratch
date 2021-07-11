@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test52");
+console.log("test53");
 
 class Pyscratch {
 
@@ -32,6 +32,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(data)
 		}).then(res => res.json()).catch(error => {
+			console.log(error);
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
@@ -62,6 +63,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(v)
 		}).then(res => res.json()).catch(error => {
+			console.log(error);
 			return {"clone_id":"UNKNOWN","cmds":[{"cmd":"DISCONNECTED","clone_id":"UNKNOWN"}],"error":error};
 		}).then(res => callback(res, this));
 	}
@@ -78,6 +80,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(d)
 		}).then(res => res.json()).catch(error => {
+			console.log(error);
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
@@ -94,6 +97,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(d)
 		}).then(res => res.json()).catch(error => {
+			console.log(error);
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
@@ -110,6 +114,7 @@ class Pyscratch {
 			},
 			body: JSON.stringify(d)
 		}).then(res => res.json()).catch(error => {
+			console.log(error);
 			return {"clone_id":"DISCONNECTED","error":error};
 		}).then(res => callback(res, this));
 	}
