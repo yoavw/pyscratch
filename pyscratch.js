@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test48");
+console.log("test49");
 
 class Pyscratch {
 
@@ -232,7 +232,7 @@ class Pyscratch {
 	}
 
 	getCloneID({object_name, cur_id}) {
-		ret = this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
+		var ret = this.fetchCloneID(object_name, cur_id, function(data, pyscratch) {
 			pyscratch.vars[data.clone_id] = { 'clone_id' : data.clone_id };
 			pyscratch.vars[data.clone_id].uuid = pyscratch.uuid;
 			pyscratch.cmds[data.clone_id] = [];
