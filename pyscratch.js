@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test55");
+console.log("test56");
 
 class Pyscratch {
 
@@ -182,7 +182,7 @@ class Pyscratch {
 		if (name in this.fetching)
 			return;
 		this.concurrency_check++;
-		console.log(this.concurrency_check);
+		//console.log(this.concurrency_check);
 		this.fetching[name] = true;
 		this.fetchCommand(name, function(data, pyscratch) {
 			var c,k;
