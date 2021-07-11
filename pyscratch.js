@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test53");
+console.log("test54");
 
 class Pyscratch {
 
@@ -177,7 +177,7 @@ class Pyscratch {
 	}
 
 	getCommands({name}) {
-		this.fetchCommand(name, function(data, pyscratch) {
+		return this.fetchCommand(name, function(data, pyscratch) {
 			var c,k;
 			//console.log(data);
 			for (c in data.cmds) {
@@ -251,11 +251,11 @@ class Pyscratch {
 	}
 
 	sendEvent({event_name, event_arg, clone_id}) {
-		this.deliverEvent(event_name, event_arg, clone_id, function(data, pyscratch) {});
+		return this.deliverEvent(event_name, event_arg, clone_id, function(data, pyscratch) {});
 	}
 
 	startEvent() {
-		this.deliverStart(function(data, pyscratch) {
+		return this.deliverStart(function(data, pyscratch) {
 			pyscratch.uuid = data.uuid;
 			console.log('sent start event, UUID='+pyscratch.uuid);
 			return;
@@ -263,14 +263,14 @@ class Pyscratch {
 	}
 
 	createVar({name, value}) {
-		this.deliverVar(name, value, function(data, pyscratch) {
+		return this.deliverVar(name, value, function(data, pyscratch) {
 			console.log('created var '+name+' = '+value);
 			return;
 		});
 	}
 
 	createColorVar({name, value}) {
-		this.deliverVar(name, value, function(data, pyscratch) {
+		return this.deliverVar(name, value, function(data, pyscratch) {
 			console.log('created color var '+name+' = '+value);
 			return;
 		});
