@@ -5,7 +5,7 @@
 //
 // Copyright (C) 2017 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test57");
+console.log("test58");
 
 class Pyscratch {
 
@@ -18,7 +18,7 @@ class Pyscratch {
 		this.disconnected = false;
 		this.loaded = false;
 		//this.fetching = {};
-		//this.concurrency_check = 0;
+		this.concurrency_check = 0;
 
 		//window.JSshowWarning = function(){console.log('ext loaded');return true;};
 	}
@@ -181,8 +181,8 @@ class Pyscratch {
 	getCommands({name}) {
 		//if (name in this.fetching)
 			//return;
-		//this.concurrency_check++;
-		//console.log(this.concurrency_check);
+		this.concurrency_check++;
+		console.log(this.concurrency_check);
 		//this.fetching[name] = true;
 		//this.fetchCommand(name, function(data, pyscratch) {
 		return this.fetchCommand(name, function(data, pyscratch) {
@@ -232,7 +232,7 @@ class Pyscratch {
 					console.log("ERROR: got command "+JSON.stringify(cmd_args)+" for unknown "+clone_id);
 				}
 			}
-			//pyscratch.concurrency_check--;
+			pyscratch.concurrency_check--;
 			//delete pyscratch.fetching[data.name];
 			if (pyscratch.disconnected) {
 				new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
