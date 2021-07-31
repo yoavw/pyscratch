@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test4");
+console.log("test5");
 
 const events = {
 	EVENT_MODE : 0,
@@ -617,7 +617,8 @@ class Wand {
 					arguments: {
 						URL: {
 								type: Scratch.ArgumentType.STRING,
-								defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%20014A%20028A%2027A6%2009281809090909091818181818%2055'
+								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%20014A%20028A%2027A6%2009281809090909091818181818%2055'
+								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%200104%2027BA%2009381818182909091818181818%2055'
 						}
 					}
 				},
@@ -630,7 +631,8 @@ class Wand {
 					arguments: {
 						URL: {
 								type: Scratch.ArgumentType.STRING,
-								defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%200154%20028A%2027EC%2018281809090909090918181809%2055'
+								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%200154%20028A%2027EC%2018281809090909090918181809%2055'
+								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%20010E%2027A6%2018381818180929090918181809%2055'
 						}
 					}
 				},
@@ -643,7 +645,8 @@ class Wand {
 					arguments: {
 						URL: {
 								type: Scratch.ArgumentType.STRING,
-								defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200186%20010E%2002C6%2027D8%2038081A1A1A1A0A080808080A28%2055'
+								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200186%20010E%2002C6%2027D8%2038081A1A1A1A0A080808080A28%2055'
+								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%20010E%2027BA%2018381818182909091818181809%2055'
 						}
 					}
 				},
