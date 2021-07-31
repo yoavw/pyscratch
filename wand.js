@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test6");
+console.log("test7");
 
 const events = {
 	EVENT_MODE : 0,
@@ -66,57 +66,57 @@ class Wand {
 			wand.last_seen = data.last_seen;
 			wand.last_state = data.last_state;
 			while (data.events.length > 0) {
-				var ev = this.events.shift();
+				var ev = wand.events.shift();
 				switch (ev.event) {
 					case events.EVENT_MODE:
 						if (ev.mode == 2) {
 							console.log('connected');
-							this.events.connected.push(ev);
+							wand.events.connected.push(ev);
 						} else {
 							console.log('disconnected');
-							this.events.disconnected.push(ev);
+							wand.events.disconnected.push(ev);
 						}
 						break;
 					case events.EVENT_MOTION:
 						switch (ev.motion) {
 							case motions.MOTION_SWISH_RIGHT:
 								console.log('right');
-								this.events.right.push(ev);
+								wand.events.right.push(ev);
 								break;
 							case motions.MOTION_SWISH_LEFT:
 								console.log('left');
-								this.events.left.push(ev);
+								wand.events.left.push(ev);
 								break;
 							case motions.MOTION_SWISH_UP:
 								console.log('up');
-								this.events.up.push(ev);
+								wand.events.up.push(ev);
 								break;
 							case motions.MOTION_SWISH_DOWN:
 								console.log('down');
-								this.events.down.push(ev);
+								wand.events.down.push(ev);
 								break;
 							case motions.MOTION_SWISH_WRIST_RIGHT:
 								console.log('roll_right');
-								this.events.roll_right.push(ev);
+								wand.events.roll_right.push(ev);
 								break;
 							case motions.MOTION_SWISH_WRIST_LEFT:
 								console.log('roll_left');
-								this.events.roll_left.push(ev);
+								wand.events.roll_left.push(ev);
 								break;
 						}
 						break;
 					case events.EVENT_HELD_CHANGED:
 						if (ev.held) {
 							console.log('held');
-							this.events.held.push(ev);
+							wand.events.held.push(ev);
 						} else {
 							console.log('unheld');
-							this.events.unheld.push(ev);
+							wand.events.unheld.push(ev);
 						}
 						break;
 					case events.EVENT_UPPER_PRESSED:
 						console.log('pressed');
-						this.events.pressed.push(ev);
+						wand.events.pressed.push(ev);
 						break;
 				}
 			}
