@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test2");
+console.log("test3");
 
 const events = {
 	EVENT_MODE : 0,
@@ -27,7 +27,6 @@ const motions = {
 class Wand {
 
 	constructor() {
-		//this.vars = Object();
 		this.events = { 'connected':[], 'disconnected':[], 'right':[], 'left':[], 'up':[], 'down':[], 'roll_right':[], 'roll_left':[], 'held':[], 'unheld':[], 'pressed':[] };
 		this.last_state = {"effect": 0, "bri": 0, "ay": 0, "held": false, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1};
 		this.last_seen = -1;
@@ -700,5 +699,5 @@ class Wand {
 	}
 }
 
-Scratch.extensions.register(new Pyscratch());
+Scratch.extensions.register(new Wand());
 
