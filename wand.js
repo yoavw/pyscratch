@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test3");
+console.log("test4");
 
 const events = {
 	EVENT_MODE : 0,
@@ -499,24 +499,6 @@ class Wand {
 					}
 				},
 				{
-					opcode: 'mode',
-
-					blockType: Scratch.BlockType.REPORTER,
-
-					text: 'get wand mode',
-					arguments: {
-					}
-				},
-				{
-					opcode: 'mode',
-
-					blockType: Scratch.BlockType.REPORTER,
-
-					text: 'get wand mode',
-					arguments: {
-					}
-				},
-				{
 					opcode: 'isHeld',
 
 					blockType: Scratch.BlockType.BOOLEAN,
@@ -609,7 +591,7 @@ class Wand {
 						},
 						COLOR: {
 								type: Scratch.ArgumentType.COLOR,
-								defaultValue: 0
+								defaultValue: ''
 						}
 					}
 				},
