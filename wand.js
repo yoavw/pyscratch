@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test5");
+console.log("test6");
 
 const events = {
 	EVENT_MODE : 0,
@@ -63,8 +63,8 @@ class Wand {
 	getEvents({URL}) {
 		this.url = URL;
 		return this.fetchEvents(function(data, wand) {
-			this.last_seen = data.last_seen;
-			this.last_state = data.last_state;
+			wand.last_seen = data.last_seen;
+			wand.last_state = data.last_state;
 			while (data.events.length > 0) {
 				var ev = this.events.shift();
 				switch (ev.event) {
