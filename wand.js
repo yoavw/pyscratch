@@ -2,8 +2,11 @@
 //
 // Copyright (C) 2021 Yoav Weiss (weiss.yoav@gmail.com)
 
-console.log("test7");
+// https://sheeptester.github.io/scratch-gui/?load_plugin=https://192.168.10.8:9898/wand.js
 
+console.log("test9");
+
+/*
 const events = {
 	EVENT_MODE : 0,
 	EVENT_MOTION : 1,
@@ -23,16 +26,20 @@ const motions = {
 	MOTION_WRIST_RIGHT : 5,
 	MOTION_WRIST_LEFT : 6
 }
+*/
 
 class Wand {
 
-	constructor() {
+	constructor(runtime) {
+		this.runtime = runtime;
 		this.events = { 'connected':[], 'disconnected':[], 'right':[], 'left':[], 'up':[], 'down':[], 'roll_right':[], 'roll_left':[], 'held':[], 'unheld':[], 'pressed':[] };
-		this.last_state = {"effect": 0, "bri": 0, "ay": 0, "held": false, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1};
+		this.leds = {};
+		this.last_state = {"effect": "Solid", "bri": 0, "ay": 0, "held": false, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1};
 		this.last_seen = -1;
-		this.url = 'http://192.168.10.8:9898/';
-		this.disconnected = false;
+		this.url = 'https://192.168.10.8:9898/';
 		this.loaded = false;
+		this.testhat = false;
+		this.testhatCtrs = {false:0,true:0};
 	}
 
 	fetchEvents(callback) {
@@ -45,10 +52,10 @@ class Wand {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).then(res => res.json()).catch(error => {
+		}).then(res => res.json()).then(res => callback(res, this)).catch(error => {
 			console.log(error);
-			return {"last_seen": 9999, "events": [{"effect": 0, "motion": "none", "bri": 0, "ay": 0, "held": false, "event": events.EVENT_MODE, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1}], "last_state": {"effect": 0, "bri": 0, "ay": 0, "held": false, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1}, "error":error};
-		}).then(res => callback(res, this));
+			callback({"last_seen": 9999, "events": [{"effect": "Solid", "motion": "none", "bri": 0, "ay": 0, "held": false, "event": "mode", "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1}], "last_state": {"effect": "Solid", "bri": 0, "ay": 0, "held": false, "gz": 0, "az": 0, "upper_touched": false, "opposite_touched": false, "gx": 0, "ax": 0, "y_orientation": 0, "gy": 0, "mode": -1}, "error":error}, this);
+		});
 	}
 
 	// Cleanup function when the extension is unloaded
@@ -66,9 +73,11 @@ class Wand {
 			wand.last_seen = data.last_seen;
 			wand.last_state = data.last_state;
 			while (data.events.length > 0) {
-				var ev = wand.events.shift();
+				var ev = data.events.shift();
+				//console.log(ev);
+				//console.log(ev.event);
 				switch (ev.event) {
-					case events.EVENT_MODE:
+					case "mode":
 						if (ev.mode == 2) {
 							console.log('connected');
 							wand.events.connected.push(ev);
@@ -77,35 +86,35 @@ class Wand {
 							wand.events.disconnected.push(ev);
 						}
 						break;
-					case events.EVENT_MOTION:
+					case "motion":
 						switch (ev.motion) {
-							case motions.MOTION_SWISH_RIGHT:
+							case "right":
 								console.log('right');
 								wand.events.right.push(ev);
 								break;
-							case motions.MOTION_SWISH_LEFT:
+							case "left":
 								console.log('left');
 								wand.events.left.push(ev);
 								break;
-							case motions.MOTION_SWISH_UP:
+							case "up":
 								console.log('up');
 								wand.events.up.push(ev);
 								break;
-							case motions.MOTION_SWISH_DOWN:
+							case "down":
 								console.log('down');
 								wand.events.down.push(ev);
 								break;
-							case motions.MOTION_SWISH_WRIST_RIGHT:
+							case "roll_right":
 								console.log('roll_right');
 								wand.events.roll_right.push(ev);
 								break;
-							case motions.MOTION_SWISH_WRIST_LEFT:
+							case "roll_left":
 								console.log('roll_left');
 								wand.events.roll_left.push(ev);
 								break;
 						}
 						break;
-					case events.EVENT_HELD_CHANGED:
+					case "held":
 						if (ev.held) {
 							console.log('held');
 							wand.events.held.push(ev);
@@ -114,7 +123,7 @@ class Wand {
 							wand.events.unheld.push(ev);
 						}
 						break;
-					case events.EVENT_UPPER_PRESSED:
+					case "upper_touch_pressed":
 						console.log('pressed');
 						wand.events.pressed.push(ev);
 						break;
@@ -125,47 +134,53 @@ class Wand {
 	}
 
 	connected() {
-		return this.events.connected.shift() != 'undefined';
+		return this.events.connected.shift() != undefined;
 	}
 
 	disconnected() {
-		return this.events.disconnected.shift() != 'undefined';
+		return this.events.disconnected.shift() != undefined;
 	}
 
 	right() {
-		return this.events.right.shift() != 'undefined';
+		var ret = this.events.right.shift() != undefined;
+		if (ret)
+			console.log("Right triggered");
+		return ret;
 	}
 
 	left() {
-		return this.events.left.shift() != 'undefined';
+		var ret = this.events.left.shift() != undefined;
+		if (ret)
+			console.log("Left triggered");
+		return ret;
 	}
 
 	up() {
-		return this.events.up.shift() != 'undefined';
+		return this.events.up.shift() != undefined;
 	}
 
 	down() {
-		return this.events.down.shift() != 'undefined';
+		return this.events.down.shift() != undefined;
 	}
 
 	roll_right() {
-		return this.events.roll_right.shift() != 'undefined';
+		return this.events.roll_right.shift() != undefined;
 	}
 
 	roll_left() {
-		return this.events.roll_left.shift() != 'undefined';
+		return this.events.roll_left.shift() != undefined;
 	}
 
 	held() {
-		return this.events.held.shift() != 'undefined';
+		return this.events.held.shift() != undefined;
 	}
 
 	unheld() {
-		return this.events.unheld.shift() != 'undefined';
+		return this.events.unheld.shift() != undefined;
 	}
 
 	pressed() {
-		return this.events.pressed.shift() != 'undefined';
+		return this.events.pressed.shift() != undefined;
 	}
 
 	mode() {
@@ -178,10 +193,6 @@ class Wand {
 
 	bri() {
 		return this.last_state.bri;
-	}
-
-	held() {
-		return this.last_state.held;
 	}
 
 	upper_touched() {
@@ -236,65 +247,120 @@ class Wand {
 		return this.last_state.upper_touched;
 	}
 
-	setEffect({EFFECT}) {
-		// XXX
+	setEffect({EFFECT,SPEED}) {
+		var data = {'proxy':'effect', 'effect':EFFECT, 'speed':SPEED};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
 	}
 
 	setBrightness({BRI}) {
-		// XXX
+		var data = {'proxy':'bri', 'bri':BRI};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
+	}
+
+	setLedsState({ON}) {
+		var data = {'proxy':'on', 'on':ON};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
+	}
+
+	setWandColor({COLOR}) {
+		var data = {'proxy':'color', 'color':COLOR};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
 	}
 
 	setLeds({LED,COLOR}) {
-		// XXX
+		if (parseInt(LED) > 125) {
+			console.log("Only 126 leds allowed");
+			return;
+		}
+		this.leds[LED] = COLOR;
 	}
 
-	sendLeds({URL}) {
-		// XXX
+	resetLeds() {
+		this.leds = {};
 	}
 
-	toggleLight({URL}) {
-		return fetch(URL, {
-			method: 'GET',
+	sendLeds() {
+		var data = {'proxy':'leds', 'leds':this.leds};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
 			headers: {
 				'Content-Type': 'application/json'
-			}
-		}).then(res => res.json()).catch(error => {
-			console.log(error);
-		}).then(() => {
-			console.log("success");
-        });
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
 	}
 
-	fanOn({URL}) {
-		return fetch(URL, {
-			method: 'GET',
+	toggleLight() {
+		var data = {'proxy':'toggleLight'};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
 			headers: {
 				'Content-Type': 'application/json'
-			}
-		}).then(res => res.json()).catch(error => {
-			console.log(error);
-		}).then(() => {
-			console.log("success");
-        });
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
 	}
 
-	fanOff({URL}) {
-		return fetch(URL, {
-			method: 'GET',
+	fanOn() {
+		var data = {'proxy':'fanOn'};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
 			headers: {
 				'Content-Type': 'application/json'
-			}
-		}).then(res => res.json()).catch(error => {
-			console.log(error);
-		}).then(() => {
-			console.log("success");
-        });
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
+	}
+
+	fanOff() {
+		var data = {'proxy':'fanOff'};
+		return fetch(this.url+'cmd', {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		}).then(res => res.json()).then(res => console.log(res)).catch(error => console.log(error));
 	}
 
 	scratchLog({l1, l2, l3}) {
@@ -310,6 +376,29 @@ class Wand {
 		return true;
 	}
 
+/*
+	testHatTrigger() {
+		console.log("triggering testhat");
+		this.testhat = true;
+	}
+
+	testHat() {
+		this.testhatCtrs[this.testhat]++;
+		if (this.testhat) {
+			console.log("testhat triggered");
+			this.testhat = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	testHatBoolean() {
+		console.log("testing testhat: ", this.testhat, this.testhatCtrs);
+		return this.testhat;
+	}
+*/
+
 	getInfo() {
 		return {
 			id: 'wand',
@@ -319,20 +408,20 @@ class Wand {
 				{
 					opcode: 'getEvents',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "hat",
 
 					text: 'get events from the wand at [URL]',
 					arguments: {
 						URL: {
-								type: Scratch.ArgumentType.STRING,
-								defaultValue: 'http://192.168.10.8:9898/'
+								type: "string",
+								defaultValue: 'https://192.168.10.8:9898/'
 						}
 					}
 				},
 				{
 					opcode: 'connected',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand connected',
 					arguments: {}
@@ -340,7 +429,7 @@ class Wand {
 				{
 					opcode: 'disconnected',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand disconnected',
 					arguments: {}
@@ -348,7 +437,7 @@ class Wand {
 				{
 					opcode: 'right',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand swished right',
 					arguments: {}
@@ -356,7 +445,7 @@ class Wand {
 				{
 					opcode: 'left',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand swished left',
 					arguments: {}
@@ -364,7 +453,7 @@ class Wand {
 				{
 					opcode: 'up',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand swished up',
 					arguments: {}
@@ -372,7 +461,7 @@ class Wand {
 				{
 					opcode: 'down',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand swished down',
 					arguments: {}
@@ -380,7 +469,7 @@ class Wand {
 				{
 					opcode: 'roll_right',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand rolled right',
 					arguments: {}
@@ -388,7 +477,7 @@ class Wand {
 				{
 					opcode: 'roll_left',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand rolled left',
 					arguments: {}
@@ -396,7 +485,7 @@ class Wand {
 				{
 					opcode: 'held',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand picked up',
 					arguments: {}
@@ -404,7 +493,7 @@ class Wand {
 				{
 					opcode: 'unheld',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand put down',
 					arguments: {}
@@ -412,7 +501,7 @@ class Wand {
 				{
 					opcode: 'pressed',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'wand upper touch pressed',
 					arguments: {}
@@ -420,7 +509,7 @@ class Wand {
 				{
 					opcode: 'mode',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get wand mode',
 					arguments: {
@@ -429,7 +518,7 @@ class Wand {
 				{
 					opcode: 'effect',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get wand effect',
 					arguments: {
@@ -438,7 +527,7 @@ class Wand {
 				{
 					opcode: 'bri',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get wand brightness',
 					arguments: {
@@ -447,7 +536,7 @@ class Wand {
 				{
 					opcode: 'ax',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get accelerometer x',
 					arguments: {
@@ -456,7 +545,7 @@ class Wand {
 				{
 					opcode: 'ay',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get accelerometer y',
 					arguments: {
@@ -465,7 +554,7 @@ class Wand {
 				{
 					opcode: 'az',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get accelerometer z',
 					arguments: {
@@ -474,7 +563,7 @@ class Wand {
 				{
 					opcode: 'gx',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get gyro x',
 					arguments: {
@@ -483,7 +572,7 @@ class Wand {
 				{
 					opcode: 'gy',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get gyro y',
 					arguments: {
@@ -492,7 +581,7 @@ class Wand {
 				{
 					opcode: 'gz',
 
-					blockType: Scratch.BlockType.REPORTER,
+					blockType: "reporter",
 
 					text: 'get gyro z',
 					arguments: {
@@ -501,7 +590,7 @@ class Wand {
 				{
 					opcode: 'isHeld',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the wand held?',
 					arguments: {
@@ -510,7 +599,7 @@ class Wand {
 				{
 					opcode: 'isConnected',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the wand connected?',
 					arguments: {
@@ -519,7 +608,7 @@ class Wand {
 				{
 					opcode: 'isUpperTouched',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the upper touchpad touched?',
 					arguments: {
@@ -528,7 +617,7 @@ class Wand {
 				{
 					opcode: 'isUp',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the wand pointed up?',
 					arguments: {
@@ -537,7 +626,7 @@ class Wand {
 				{
 					opcode: 'isDown',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the wand pointed down?',
 					arguments: {
@@ -546,7 +635,7 @@ class Wand {
 				{
 					opcode: 'isLevel',
 
-					blockType: Scratch.BlockType.BOOLEAN,
+					blockType: "Boolean",
 
 					text: 'is the wand level?',
 					arguments: {
@@ -555,134 +644,216 @@ class Wand {
 				{
 					opcode: 'setEffect',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
-					text: 'set wand effect to [EFFECT]',
+					text: 'set wand effect to [EFFECT] with speed [SPEED]',
 					arguments: {
 						EFFECT: {
-								type: Scratch.ArgumentType.NUMBER,
-								defaultValue: 1
+								type: "string",
+								menu: "effects",
+								defaultValue: "Rainbow"
+						},
+						SPEED: {
+								type: "number",
+								defaultValue: 128
 						}
 					}
 				},
 				{
 					opcode: 'setBrightness',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
 					text: 'set wand brightness to [BRI]',
 					arguments: {
-						EFFECT: {
-								type: Scratch.ArgumentType.NUMBER,
+						BRI: {
+								type: "number",
 								defaultValue: 100
+						}
+					}
+				},
+				{
+					opcode: 'setLedsState',
+
+					blockType: "command",
+
+					text: 'set leds state [ON]',
+					arguments: {
+						ON: {
+								type: "boolean",
+								menu: "on",
+								defaultValue: "on"
+						}
+					}
+				},
+				{
+					opcode: 'setWandColor',
+
+					blockType: "command",
+
+					text: 'set the wand color to [COLOR]',
+					arguments: {
+						COLOR: {
+								type: "color",
+								defaultValue: ''
 						}
 					}
 				},
 				{
 					opcode: 'setLeds',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
 					text: 'set the color of [LED] to [COLOR]',
 					arguments: {
 						LED: {
-								type: Scratch.ArgumentType.NUMBER,
+								type: "number",
+								menu: "leds",
 								defaultValue: 0
 						},
 						COLOR: {
-								type: Scratch.ArgumentType.COLOR,
+								type: "color",
 								defaultValue: ''
 						}
+					}
+				},
+				{
+					opcode: 'resetLeds',
+
+					blockType: "command",
+
+					text: 'reset all leds',
+					arguments: {
 					}
 				},
 				{
 					opcode: 'sendLeds',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
-					text: 'send the led colors to [URL]',
+					text: 'send the led colors to the wand',
 					arguments: {
-						URL: {
-								type: Scratch.ArgumentType.STRING,
-								defaultValue: 'http://192.168.10.8:9898/'
-						}
 					}
 				},
 				{
 					opcode: 'toggleLight',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
-					text: 'toggle the light using [URL]',
+					text: 'toggle the light',
 					arguments: {
-						URL: {
-								type: Scratch.ArgumentType.STRING,
-								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%20014A%20028A%2027A6%2009281809090909091818181818%2055'
-								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%200104%2027BA%2009381818182909091818181818%2055'
-						}
 					}
 				},
 				{
 					opcode: 'fanOn',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
-					text: 'turn on the fan using [URL]',
+					text: 'turn on the fan',
 					arguments: {
-						URL: {
-								type: Scratch.ArgumentType.STRING,
-								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2015%2003%2004%200154%20028A%2027EC%2018281809090909090918181809%2055'
-								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%20010E%2027A6%2018381818180929090918181809%2055'
-						}
 					}
 				},
 				{
 					opcode: 'fanOff',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
-					text: 'turn off the fan using [URL]',
+					text: 'turn off the fan',
 					arguments: {
-						URL: {
-								type: Scratch.ArgumentType.STRING,
-								//defaultValue: 'http://192.168.10.236/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200186%20010E%2002C6%2027D8%2038081A1A1A1A0A080808080A28%2055'
-								defaultValue: 'http://192.168.10.216/cm?cmnd=RfRaw%20AA%20B0%2017%2004%2004%200172%200258%20010E%2027BA%2018381818182909091818181809%2055'
-						}
 					}
 				},
 				{
 					opcode: 'when_loaded',
 
-					blockType: Scratch.BlockType.HAT,
+					blockType: "hat",
 
 					text: 'Extension loaded',
 					arguments: {}
 				},
+/*
+				{
+					opcode: 'testHat',
+
+					blockType: "hat",
+
+					text: 'test hat',
+					arguments: {}
+				},
+				{
+					opcode: 'testHatBoolean',
+
+					blockType: "Boolean",
+
+					text: 'test hat boolean',
+					arguments: {}
+				},
+				{
+					opcode: 'testHatTrigger',
+
+					blockType: "command",
+
+					text: 'trigger the test hat',
+					arguments: {}
+				},
+*/
 				{
 					opcode: 'scratchLog',
 
-					blockType: Scratch.BlockType.COMMAND,
+					blockType: "command",
 
 					text: 'log [l1] [l2] [l3]',
 					arguments: {
 						l1: {
-								type: Scratch.ArgumentType.STRING,
+								type: "string",
 								defaultValue: ''
 						},
 						l2: {
-								type: Scratch.ArgumentType.STRING,
+								type: "string",
 								defaultValue: ''
 						},
 						l3: {
-								type: Scratch.ArgumentType.STRING,
+								type: "string",
 								defaultValue: ''
 						}
 					}
 				}
-			]
+			],
+			'menus': {
+				'effects': {
+					acceptReporters: true,
+					items: [
+						"Solid","Blink","Breathe","Wipe","Wipe Random","Random Colors","Sweep","Dynamic","Colorloop","Rainbow",
+						"Scan","Scan Dual","Fade","Theater","Theater Rainbow","Running","Saw","Twinkle","Dissolve","Dissolve Rnd",
+						"Sparkle","Sparkle Dark","Sparkle+","Strobe","Strobe Rainbow","Strobe Mega","Blink Rainbow","Android","Chase","Chase Random",
+						"Chase Rainbow","Chase Flash","Chase Flash Rnd","Rainbow Runner","Colorful","Traffic Light","Sweep Random","Running 2","Red & Blue","Stream",
+						"Scanner","Lighthouse","Fireworks","Rain","Merry Christmas","Fire Flicker","Gradient","Loading","Police","Police All",
+						"Two Dots","Two Areas","Circus","Halloween","Tri Chase","Tri Wipe","Tri Fade","Lightning","ICU","Multi Comet",
+						"Scanner Dual","Stream 2","Oscillate","Pride 2015","Juggle","Palette","Fire 2012","Colorwaves","Bpm","Fill Noise",
+						"Noise 1","Noise 2","Noise 3","Noise 4","Colortwinkles","Lake","Meteor","Meteor Smooth","Railway","Ripple",
+						"Twinklefox","Twinklecat","Halloween Eyes","Solid Pattern","Solid Pattern Tri","Spots","Spots Fade","Glitter","Candle","Fireworks Starburst",
+						"Fireworks 1D","Bouncing Balls","Sinelon","Sinelon Dual","Sinelon Rainbow","Popcorn","Drip","Plasma","Percent","Ripple Rainbow",
+						"Heartbeat","Pacifica","Candle Multi", "Solid Glitter","Sunrise","Phased","Twinkleup","Noise Pal", "Sine","Phased Noise",
+						"Flow","Chunchun"
+					]
+				},
+				'on': {
+					acceptReporters: true,
+					items: ["on","off"]
+				},
+				'leds': {
+					acceptReporters: true,
+					items: Array(126). fill(). map((_, idx) => String(idx))
+				}
+			}
 		}
 	}
 }
 
-Scratch.extensions.register(new Wand());
+//Scratch.extensions.register(new Wand());
+
+(function() {
+    var extensionInstance = new Wand(window.vm.extensionManager.runtime)
+    var serviceName = window.vm.extensionManager._registerInternalExtension(extensionInstance)
+    window.vm.extensionManager._loadedExtensions.set(extensionInstance.getInfo().id, serviceName)
+})()
 
